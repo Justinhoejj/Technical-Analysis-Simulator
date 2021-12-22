@@ -29,11 +29,11 @@ def get_crypto_name(symbol):
 def get_data(symbol, start, end):
   symbol = symbol.upper()
   if symbol == "BTC":
-    df = analyse("/Users/justinhoe/Desktop/Projects/BTC-AlgoTradeAnalysis/testDataset/BTC-USD.csv")
+    df = analyse("testDataset/BTC-USD.csv")
   elif symbol == "ETH":
-    df = analyse("/Users/justinhoe/Desktop/Projects/BTC-AlgoTradeAnalysis/testDataset/ETH-USD.csv")
+    df = analyse("testDataset/ETH-USD.csv")
   elif symbol == "DOGE":
-    df = analyse("/Users/justinhoe/Desktop/Projects/BTC-AlgoTradeAnalysis/testDataset/DOGE-USD.csv")
+    df = analyse("testDataset/DOGE-USD.csv")
   else: 
     df = pd.DataFrame(columns=['Date', 'Close', 'Open','Volume', 'Adj Close'])
   
