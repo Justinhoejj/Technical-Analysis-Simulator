@@ -1,63 +1,57 @@
 import streamlit as st
-import pandas as pd
 import datetime
-import plotly.graph_objects as go
-import matplotlib.pyplot as plt
-from technicalIndicatorUtils import analyse, execute_MACD
+from technicalIndicators import macdIndicator, obvIndicator, stochRsiIndicator
+from dataManager import get_historical_data, get_crypto_symbols, get_crypto_name
+from technicalIndicatorUtils import analyse, plot_signals
 
 st.title("Technical Analysis Simulator")
 st.sidebar.header("Select Parameters")
 
-def get_input():
-  indicator = st.sidebar.selectbox("Technical Indicator", ('MACD',''))
-  start_date = st.sidebar.text_input("Start Date", "2020-01-01")
-  end_date = st.sidebar.text_input("End Date", "2020-08-01")
-  crypto_symbol = st.sidebar.selectbox("Cryptocurrency", ('BTC', 'ETH', 'DOGE'))
-  return start_date, end_date, crypto_symbol
+def get_simulation_params():
+  crypto_symbol = st.sidebar.selectbox("Cryptocurrency Symbol", get_crypto_symbols())
+  indicator = st.sidebar.selectbox("Technical Indicator", ('MACD Crossover', "On-Balance Volume", "Stochastic RSI"))
+  # default stasrt date 1 year ago
+  start_date = st.sidebar.date_input("Start Date", datetime.datetime.now() - datetime.timedelta(days=365))
+  end_date = st.sidebar.date_input("End Date")
+  return crypto_symbol, indicator, start_date, end_date
 
-def get_crypto_name(symbol):
-  symbol = symbol.upper()
-  if symbol == "BTC":
-    return "Bitcoin"
-  elif symbol == "ETH":
-    return "Ethereum"
-  elif symbol == "DOGE":
-    return "Dogecoin"
+def apply_technical_indicator(df, indicator):
+  if indicator == "MACD Crossover":
+    return macdIndicator.execute_MACD(df)
+  elif indicator == "On-Balance Volume":
+    return obvIndicator.execute_OBV(df)
+  elif indicator == "Stochastic RSI":
+    return stochRsiIndicator.execute_stochastic_rsi(df)
   else:
-    return "NONE"
+    return df
 
-def get_data(symbol, start, end):
-  symbol = symbol.upper()
-  if symbol == "BTC":
-    df = analyse("testDataset/BTC-USD.csv")
-  elif symbol == "ETH":
-    df = analyse("testDataset/ETH-USD.csv")
-  elif symbol == "DOGE":
-    df = analyse("testDataset/DOGE-USD.csv")
-  else: 
-    df = pd.DataFrame(columns=['Date', 'Close', 'Open','Volume', 'Adj Close'])
-  
-  start = pd.to_datetime(start)
-  end = pd.to_datetime(end)
+def display_indicator_info(indicator):
+  if indicator == 'MACD Crossover':
+    macdIndicator.DESCRIPTION
+  elif indicator == 'On-Balance Volume': 
+    obvIndicator.DESCRIPTION
+  elif indicator == 'Stochastic RSI':
+    stochRsiIndicator.DESCRIPTION
+  else:
+    "wait wot.."
+# Receive user inputs
+symbol, indicator, start, end = get_simulation_params()
 
-  execute_MACD(df)
-  df = df.set_index(pd.DatetimeIndex(df['Date'].values))
+# Perform computations
+df = get_historical_data(symbol, start, end)
+df = analyse(df)
+report = apply_technical_indicator(df, indicator)
 
-  return df.loc[start: end]
+# Display
+st.header((indicator) + " Analysis on " + get_crypto_name(symbol) + " Price")
+display_indicator_info(indicator)
 
-
-start, end, symbol = get_input()
-df = get_data(symbol, start, end)
-crypto_name = get_crypto_name(symbol)
-
-st.header(crypto_name + " Close Price")
-fig = plt.figure(figsize=(12.2, 4.5))
-plt.scatter(df.index, df['MACD_Buy_Price'], color = 'green', label='Buy', marker='^', alpha=1)
-plt.scatter(df.index, df['MACD_Sell_Price'], color = 'red', label='Sell', marker='v', alpha=1)
-plt.plot(df['Close'], label='Close Price', alpha=0.35)
-plt.title('Close Price Buy Sell Signals')
-plt.xticks(rotation=45)
-plt.xlabel('Date')
-plt.ylabel('Close Price USD ($)')
-plt.legend(loc='upper left')
-st.pyplot(fig)
+st.pyplot(plot_signals(df, symbol))
+st.subheader('Trade Summary')
+st.write(f"* Total trades: {report['wins'] + report['loss']} ({report['wins']} wins, {report['loss']} losses)")
+st.write(f"* Biggest gain: {report['maxGain']}%")
+st.write(f"* Smallest gain : {report['maxLoss']}%")
+st.write(f"* Net gains captured: {report['netPercentGains']}%")
+st.write(f"* Gains with returns reinvested: {report['cumulativePercentageChange']}%")
+st.subheader('Trade History')
+st.write(report['tradesPlaced'])
