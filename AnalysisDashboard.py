@@ -2,7 +2,7 @@ import streamlit as st
 import datetime
 from technicalIndicators import macdIndicator, obvIndicator, stochRsiIndicator
 from dataManager import get_historical_data, get_crypto_symbols, get_crypto_name
-from technicalIndicatorUtils import analyse, plot_signals
+from technicalIndicatorUtils import analyse, plot_signals, execute_buy_hold
 
 st.title("Technical Analysis Simulator")
 st.sidebar.header("Select Parameters")
@@ -42,6 +42,7 @@ symbol, indicator, start, end = get_simulation_params()
 df = get_historical_data(symbol, start, end)
 df = analyse(df)
 report = apply_technical_indicator(df, indicator)
+gains_from_buy_and_hold = execute_buy_hold(df)
 
 # Display
 st.header((indicator) + " Analysis on " + get_crypto_name(symbol) + " Price")
@@ -54,5 +55,6 @@ st.write(f"* Biggest gain: {report['maxGain']}%")
 st.write(f"* Smallest gain : {report['maxLoss']}%")
 st.write(f"* Net gains captured: {report['netPercentGains']}%")
 st.write(f"* Gains with returns reinvested: {report['cumulativePercentageChange']}%")
+st.write(f"* Gains with buy and hold strategy: {gains_from_buy_and_hold}%")
 st.subheader('Trade History')
 st.write(report['tradesPlaced'])

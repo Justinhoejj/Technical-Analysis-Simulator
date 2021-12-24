@@ -98,4 +98,4 @@ def execute_buy_hold(df):
     buyAt = df['Close'][0]
     sellAt = df['Close'][len(df.index)-1]
     percentChange = (sellAt - buyAt) * 100 / (buyAt)
-    return f'Percent change: {np.round(percentChange, 3)}%'  
+    return np.round(percentChange, 3)
