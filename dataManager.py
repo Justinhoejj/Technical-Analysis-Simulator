@@ -4,12 +4,17 @@ import requests
 from datetime import datetime
 from sqlalchemy import create_engine
 import os
+from dotenv import load_dotenv
 
-uri = os.getenv("DATABASE_URL") 
-if uri and uri.startswith("postgres://"):
-    uri = uri.replace("postgres://", "postgresql://", 1)
-engine = create_engine(uri, echo = False)
+# Set up connections
+load_dotenv()
+database_url = os.getenv("DATABASE_URL") 
+if database_url and database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+engine = create_engine(database_url, echo = False)
+YAHOO_FINANCE_API_KEY = os.getenv('YAHOO_FINANCE_API_KEY')
 
+# List of crypto
 CRYPTO_SYMBOL_NAMES = {
   'ADA': "Cardano", 
   'AVAX': "Avalanche", 
@@ -33,17 +38,11 @@ CRYPTO_SYMBOL_NAMES = {
   'XRP': "XRP"
 }
 
-
 def get_crypto_symbols():
   return CRYPTO_SYMBOL_NAMES.keys()
 
 def get_crypto_name(symbol):
   return CRYPTO_SYMBOL_NAMES[f'{symbol}']
-
-uri = os.getenv("DATABASE_URL") 
-if uri and uri.startswith("postgres://"):
-    uri = uri.replace("postgres://", "postgresql://", 1)
-engine = create_engine(uri, echo = False)
 
 def get_historical_data(symbol, start, end):
   # link to your database
@@ -61,17 +60,16 @@ def utc_integer_to_utc_date(utc_integer):
 # Request data from yahoo finance
 def get_latest_data(crypto_symbol):
   url = f'https://yfapi.net/v8/finance/chart/{crypto_symbol}-USD?range=1d&region=US&interval=1d&lang=en'
-  API_KEY = os.getenv('YAHOO_FINANCE_API_KEY')
   headers = {
     'accept':'application/json',
-    'x-api-key': API_KEY
+    'x-api-key': YAHOO_FINANCE_API_KEY
   }
   response = requests.get(url, headers=headers).json()
   return response
 
-# Save data to data base
-def update_dataset(crypto_symbol):
-  print(f'fetching{crypto_symbol}...')
+# Request and save data to data base
+def update_price_data(crypto_symbol):
+  print(f'fetching {crypto_symbol}...')
   response = get_latest_data(crypto_symbol)
   print(response)
   utc_integer = response['chart']['result'][0]['timestamp'][0]
@@ -87,14 +85,4 @@ def update_dataset(crypto_symbol):
   })
 
   newRow.to_sql(f'{crypto_symbol.lower()}', con = engine, if_exists='append', index=False)
-  print(f"saved {crypto_symbol} to db successfully")
-
-
-
-
-if __name__ == '__main__':
-  for key in get_crypto_symbols():
-    try:
-      update_dataset(key)
-    except Exception:
-      continue
+  print(f"saved {crypto_symbol} to db")
