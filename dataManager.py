@@ -7,7 +7,6 @@ from sqlalchemy import create_engine
 import psycopg2
 import os
 
-# dburl = "postgres://wojzjjudwphjut:5a0036fa0e010147a711f69fe8beee524f7842422cf9e3ab71d670b29d192385@ec2-52-70-109-8.compute-1.amazonaws.com:5432/d6pvhpuh5o5n8v"
 # con = psycopg2.connect(dburl)
 # con.cursor()
 #   API_KEY = os.getenv('YAHOO_FINANCE_API_KEY')
