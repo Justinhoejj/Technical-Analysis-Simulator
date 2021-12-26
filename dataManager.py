@@ -3,8 +3,19 @@ import numpy as np
 import requests
 from datetime import datetime
 from dateutil import tz
+from sqlalchemy import create_engine
+import psycopg2
 import os
 
+# dburl = "postgres://wojzjjudwphjut:5a0036fa0e010147a711f69fe8beee524f7842422cf9e3ab71d670b29d192385@ec2-52-70-109-8.compute-1.amazonaws.com:5432/d6pvhpuh5o5n8v"
+# con = psycopg2.connect(dburl)
+# con.cursor()
+#   API_KEY = os.getenv('YAHOO_FINANCE_API_KEY')
+
+uri = os.getenv("DATABASE_URL") 
+if uri and uri.startswith("postgres://"):
+    uri = uri.replace("postgres://", "postgresql://", 1)
+engine = create_engine(uri, echo = False)
 
 CRYPTO_SYMBOL_NAMES = {
   'ADA': "Cardano", 
@@ -30,7 +41,9 @@ CRYPTO_SYMBOL_NAMES = {
 }
 
 def get_historical_data(symbol, start, end):
-  df = pd.read_csv(f'dataset/{symbol}-USD.csv')
+  # df = pd.read_csv(f'dataset/{symbol}-USD.csv')
+  # link to your database
+  df = pd.read_sql(f"SELECT * FROM {symbol.lower()}", engine)
   df = df.set_index(pd.DatetimeIndex(df['Date'].values))
   return df.loc[start: end]
 
