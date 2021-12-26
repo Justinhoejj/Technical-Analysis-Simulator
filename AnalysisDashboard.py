@@ -1,6 +1,6 @@
 import streamlit as st
 import datetime
-from technicalIndicators import macdIndicator, obvIndicator, stochRsiIndicator
+from technicalIndicators.indicatorManager import  get_indicator, get_indicator_names
 from dataManager import get_historical_data, get_crypto_symbols, get_crypto_name
 from technicalIndicatorUtils import analyse, plot_signals, execute_buy_hold
 
@@ -9,44 +9,25 @@ st.sidebar.header("Select Parameters")
 
 def get_simulation_params():
   crypto_symbol = st.sidebar.selectbox("Cryptocurrency Symbol", get_crypto_symbols())
-  indicator = st.sidebar.selectbox("Technical Indicator", ('MACD Crossover', "On-Balance Volume", "Stochastic RSI"))
+  indicator_name = st.sidebar.selectbox("Technical Indicator", get_indicator_names())
   # default stasrt date 1 year ago
   start_date = st.sidebar.date_input("Start Date", datetime.datetime.now() - datetime.timedelta(days=365))
   end_date = st.sidebar.date_input("End Date")
-  return crypto_symbol, indicator, start_date, end_date
-
-def apply_technical_indicator(df, indicator):
-  if indicator == "MACD Crossover":
-    return macdIndicator.execute_MACD(df)
-  elif indicator == "On-Balance Volume":
-    return obvIndicator.execute_OBV(df)
-  elif indicator == "Stochastic RSI":
-    return stochRsiIndicator.execute_stochastic_rsi(df)
-  else:
-    return df
-
-def display_indicator_info(indicator):
-  if indicator == 'MACD Crossover':
-    macdIndicator.DESCRIPTION
-  elif indicator == 'On-Balance Volume': 
-    obvIndicator.DESCRIPTION
-  elif indicator == 'Stochastic RSI':
-    stochRsiIndicator.DESCRIPTION
-  else:
-    "wait wot.."
+  return crypto_symbol, indicator_name, start_date, end_date
     
 # Receive user inputs
-symbol, indicator, start, end = get_simulation_params()
+symbol, indicator_name, start, end = get_simulation_params()
 
 # Perform computations
+indicator = get_indicator(indicator_name)
 df = get_historical_data(symbol, start, end)
 df = analyse(df)
-report = apply_technical_indicator(df, indicator)
+report = indicator.simulate(df)
 gains_from_buy_and_hold = execute_buy_hold(df)
 
 # Display
-st.header((indicator) + " Analysis on " + get_crypto_name(symbol) + " Price")
-display_indicator_info(indicator)
+st.header((indicator_name) + " Analysis on " + get_crypto_name(symbol) + " Price")
+st.write(indicator.DESCRIPTION)
 
 st.pyplot(plot_signals(df, symbol))
 st.subheader('Trade Summary')
