@@ -7,8 +7,14 @@ class MacdIndicator:
                 ">Moving average convergence divergence (MACD) is a trend-following momentum indicator. "
                 + "The MACD is calculated by subtracting the 26-period exponential moving average (EMA) from the 12-period EMA. "
                 + "A 9 day EMA of MACD aka signal line is then plotted on top of the MACD line. "
-                + "A buy signal is produced when the MACD line crosses the signal line and a sell signal produced when the MACD line crosses below the signal line ([Read more](https://www.investopedia.com/terms/m/macd.asp))."
+                + "A buy signal is produced when the MACD line crosses above the signal line and a sell signal produced when the MACD line crosses below the signal line ([Read more](https://www.investopedia.com/terms/m/macd.asp))."
               )
+
+  def get_buy_message(self, crypto_symbol, price):
+    return f'{crypto_symbol} Buy signal: The MACD line for {crypto_symbol} has crossed above the 9 day EMA of MACD at {price} USD'
+  
+  def get_buy_message(self, crypto_symbol, price):
+    return f'{crypto_symbol} Sell signal: The MACD line for {crypto_symbol} has crossed below the 9 day EMA of MACD at {price} USD'
 
   # MACD crossover strategy
   def simulate(self, data):

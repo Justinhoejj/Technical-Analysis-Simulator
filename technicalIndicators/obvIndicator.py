@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from technicalIndicatorUtils import buy_report_format, sell_report_format
 
 class ObvIndicator:
   DESCRIPTION = (
@@ -8,9 +9,15 @@ class ObvIndicator:
                 + "If current day close price is higher than previous day, *add* the current day volume to previous day OBV. "
                 + "If current day close price is lower than previous day close price, *subtract* the current day volume from the pervious day OBV. " 
                 + "A 20 day EMA of OBV aka signal line is then plotted on top of the OBV line. "
-                + "A buy signal is produced when the OBV line crosses the signal line and a sell signal produced when the OBV line crosses below the signal line " 
+                + "A buy signal is produced when the OBV line crosses above the signal line and a sell signal produced when the OBV line crosses below the signal line " 
                 + "([Read more](https://www.investopedia.com/terms/o/onbalancevolume.asp))."
                 )
+  
+  def get_buy_message(self, crypto_symbol, price):
+    return f'{crypto_symbol} Buy signal: The OBV line for {crypto_symbol} has crossed above the 20 day EMA of OBV at {price} USD'
+  
+  def get_sell_message(self, crypto_symbol, price):
+    return f'{crypto_symbol} Sell signal: The OBV line for {crypto_symbol} has crossed below the 20 day EMA of OBV at {price} USD'
 
   # On Balance Volume EMA strategy
   def simulate(self, data):
@@ -44,14 +51,14 @@ class ObvIndicator:
               holdQty = cumulativeCapital / buyPrice
               prevBuyPrice = buyPrice
               isHolding = True
-              tradesPlaced += f'* {currDate}: Buy at {buyPrice}  \n'
+              tradesPlaced += buy_report_format(currDate, buyPrice)
           elif(isHolding and not np.isnan(sellPrice)):
               cumulativeCapital = holdQty * sellPrice
               percentGain = 100 * (sellPrice - prevBuyPrice) / prevBuyPrice
               netPercentGains = netPercentGains + percentGain
               maxLoss = min(maxLoss, percentGain)
               maxGain = max(maxGain, percentGain)
-              tradesPlaced += f'* {currDate}: Sell at {sellPrice}  ({np.round(percentGain,2)}%)  \n'
+              tradesPlaced += sell_report_format(currDate, sellPrice, percentGain)
               if(percentGain > 0):
                   wins += 1
               else:
