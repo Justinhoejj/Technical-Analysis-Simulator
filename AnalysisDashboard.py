@@ -12,7 +12,7 @@ def get_simulation_params():
   indicator = st.sidebar.selectbox("Technical Indicator", ('MACD Crossover', "On-Balance Volume", "Stochastic RSI"))
   # default stasrt date 1 year ago
   start_date = st.sidebar.date_input("Start Date", datetime.datetime.now() - datetime.timedelta(days=365))
-  end_date = st.sidebar.date_input("End Date", datetime.datetime(2021, 12, 23))
+  end_date = st.sidebar.date_input("End Date")
   return crypto_symbol, indicator, start_date, end_date
 
 def apply_technical_indicator(df, indicator):
