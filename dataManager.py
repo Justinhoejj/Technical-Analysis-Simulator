@@ -48,14 +48,15 @@ def get_historical_data(symbol, start, end):
   # link to your database
   df = pd.read_sql(f"SELECT * FROM {symbol.lower()}", engine)
   df = df.set_index(pd.DatetimeIndex(df['Date'].values))
-  return df.loc[start: end]
+  df['Date'] = pd.to_datetime(df['Date']).dt.date
+  return df.loc[(df['Date'] >= start) & (df['Date'] <= end)]
 
 def get_crypto_symbols():
   return CRYPTO_SYMBOL_NAMES.keys()
 
 def utc_integer_to_utc_date(utc_integer): 
   utc_zone = tz.gettz('UTC')
-  return str(datetime.fromtimestamp(utc_integer).astimezone(utc_zone).date())
+  return datetime.fromtimestamp(utc_integer).astimezone(utc_zone).date()
 
 # Request data from yahoo finance
 def get_latest_data(crypto_symbol):
