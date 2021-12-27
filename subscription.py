@@ -14,6 +14,10 @@ if database_url and database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql://", 1)
 engine = create_engine(database_url, echo = False)
 
+def send_confirmation_message(crypto_symbol, indicator_name, subscriber_email):
+  subject = f'TA Simulator: subscribed to {indicator_name} on {crypto_symbol} '
+  message = f'You have subscribed to alerts from {indicator_name} on {crypto_symbol}. Disclaimer: This service is in testing phase performance not garuanteed and service provided at best effort. \n To unsubscribe reply with subject: UNSUB-{crypto_symbol}-{indicator_name}'
+  send_mail(subscriber_email, subject, message)
 
 def add_subscriber(crypto_symbol, indicator_name, subscriber_email):
   subscription = pd.DataFrame({
@@ -22,6 +26,8 @@ def add_subscriber(crypto_symbol, indicator_name, subscriber_email):
     'email': subscriber_email
     }, index=[0]) 
   subscription.to_sql('subscription', con = engine, if_exists='append', index=False)
+  
+  send_confirmation_message(crypto_symbol, indicator_name, subscriber_email)
   print(f'new subscription: {crypto_symbol}, {indicator_name}, {subscriber_email}')
 
 def get_subscribers(crypto_symbol, indicator_name):
