@@ -18,16 +18,16 @@ def get_simulation_params():
   return crypto_symbol, indicator_name, start_date, end_date
 
 def get_subscriber_email(crypto_symbol, indicator_name):
-  st.sidebar.write(f' Get {indicator_name} signals for {crypto_symbol}')
+  st.sidebar.write(f'### Get {indicator_name} alerts for {crypto_symbol}')
   form = st.sidebar.form('subscriber email', clear_on_submit=True)
   subscriber_email = form.text_input(label='Email')
-  submit_button = form.form_submit_button(label='subscribe')
+  submit_button = form.form_submit_button(label='Subscribe')
   if submit_button:
     add_subscriber(crypto_symbol, indicator_name, subscriber_email)
 
 # Receive user inputs
 symbol, indicator_name, start, end = get_simulation_params()
-
+st.sidebar.write("##")
 get_subscriber_email(symbol, indicator_name)
 
 # Perform computations
