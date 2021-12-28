@@ -10,7 +10,7 @@ def daily_task():
     except Exception as e:
       send_mail('hoejj05@gmail.com', 
       f'Failed to update price for {crypto_symbol}',
-      e)
+      str(e))
       continue
     try:
       # Notify subscribers
@@ -18,7 +18,7 @@ def daily_task():
     except Exception as e:
       send_mail('hoejj05@gmail.com', 
       f'Failed to simulate and notifiy for {crypto_symbol}',
-      e)
+      str(e))
       continue
     
 

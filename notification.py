@@ -18,4 +18,4 @@ def send_mail(email_addresses, subject, message):
     print(response.body)
     print(response.headers)
   except Exception as e:
-    print(e.message)
+    print(e)

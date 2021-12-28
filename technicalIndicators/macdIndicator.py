@@ -11,10 +11,10 @@ class MacdIndicator:
               )
 
   def get_buy_message(self, crypto_symbol, price):
-    return f'{crypto_symbol} Buy signal: The MACD line for {crypto_symbol} has crossed above the 9 day EMA of MACD at {price} USD'
+    return f'{crypto_symbol} Bullish signal: The MACD line for {crypto_symbol} has crossed above the 9 day EMA of MACD at {price} USD'
   
-  def get_buy_message(self, crypto_symbol, price):
-    return f'{crypto_symbol} Sell signal: The MACD line for {crypto_symbol} has crossed below the 9 day EMA of MACD at {price} USD'
+  def get_sell_message(self, crypto_symbol, price):
+    return f'{crypto_symbol} Bearish signal: The MACD line for {crypto_symbol} has crossed below the 9 day EMA of MACD at {price} USD'
 
   # MACD crossover strategy
   def simulate(self, data):

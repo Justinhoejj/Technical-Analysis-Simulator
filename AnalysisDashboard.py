@@ -23,7 +23,10 @@ def get_subscriber_email(crypto_symbol, indicator_name):
   subscriber_email = form.text_input(label='Email')
   submit_button = form.form_submit_button(label='Subscribe')
   if submit_button:
-    add_subscriber(crypto_symbol, indicator_name, subscriber_email)
+    if add_subscriber(crypto_symbol, indicator_name, subscriber_email):
+      st.success(f"Confirmation Email sent to {subscriber_email}. (Check spam folder)")
+    else:
+      st.error(f"Failed to subscriber with {subscriber_email}. Please try again with a valid email.")
 
 # Receive user inputs
 symbol, indicator_name, start, end = get_simulation_params()

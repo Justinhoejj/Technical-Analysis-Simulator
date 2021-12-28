@@ -17,7 +17,4 @@ Users no longer need to keep a constant eye on technical indicators charts to id
 
 ![tradesummary](https://github.com/Justinhoejj/Technical-Analysis-Simulator/blob/master/docs/tradesummary.png)
 
-![notification](https://github.com/Justinhoejj/Technical-Analysis-Simulator/blob/master/docs/emailnotification.png)
-
-
 Visit the actual site [here](https://tasimulator.herokuapp.com/). 

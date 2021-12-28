@@ -14,10 +14,10 @@ class ObvIndicator:
                 )
   
   def get_buy_message(self, crypto_symbol, price):
-    return f'{crypto_symbol} Buy signal: The OBV line for {crypto_symbol} has crossed above the 20 day EMA of OBV at {price} USD'
+    return f'{crypto_symbol} Bullish signal: The OBV line for {crypto_symbol} has crossed above the 20 day EMA of OBV at {price} USD'
   
   def get_sell_message(self, crypto_symbol, price):
-    return f'{crypto_symbol} Sell signal: The OBV line for {crypto_symbol} has crossed below the 20 day EMA of OBV at {price} USD'
+    return f'{crypto_symbol} Bearish signal: The OBV line for {crypto_symbol} has crossed below the 20 day EMA of OBV at {price} USD'
 
   # On Balance Volume EMA strategy
   def simulate(self, data):

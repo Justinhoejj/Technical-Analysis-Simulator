@@ -10,10 +10,10 @@ class StochRsiIndicator:
                 + "([read more](https://www.investopedia.com/terms/s/stochrsi.asp)).")
   
   def get_buy_message(self, crypto_symbol, price):
-    return f'{crypto_symbol} Buy signal: The Stochastic RSI for {crypto_symbol} exited the over-sold region at {price} USD'
+    return f'{crypto_symbol} Bullish signal: The Stochastic RSI for {crypto_symbol} exited the over-sold region at {price} USD'
   
   def get_sell_message(self, crypto_symbol, price):
-    return f'{crypto_symbol} Sell signal: The Stochastic RSI for {crypto_symbol} exited the over-bought region at {price} USD'
+    return f'{crypto_symbol} Bearish signal: The Stochastic RSI for {crypto_symbol} exited the over-bought region at {price} USD'
 
   def simulate(self, data):
       buySignal = []
